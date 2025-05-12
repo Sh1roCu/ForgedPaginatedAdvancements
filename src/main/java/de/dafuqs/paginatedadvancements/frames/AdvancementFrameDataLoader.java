@@ -1,0 +1,61 @@
+package de.dafuqs.paginatedadvancements.frames;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener<List<AdvancementFrameDataLoader.Entry>> {
+
+    public static final String LOCATION = "advancement_frames";
+    public static final ResourceLocation ID = PaginatedAdvancementsClient.locate(LOCATION);
+    public static final AdvancementFrameDataLoader INSTANCE = new AdvancementFrameDataLoader();
+
+    public record Entry(ResourceLocation advancementId, ResourceLocation frameId) {
+
+        public static final Codec<Entry> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+                ResourceLocation.CODEC.fieldOf("advancement").forGetter(Entry::advancementId),
+                ResourceLocation.CODEC.fieldOf("frame").forGetter(Entry::frameId)
+        ).apply(instance, Entry::new));
+
+        public static final Codec<List<Entry>> LIST_CODEC = CODEC.listOf();
+
+    }
+
+    protected static final Map<ResourceLocation, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
+
+    public AdvancementFrameDataLoader() {
+        super(Entry.LIST_CODEC, FileToIdConverter.json(LOCATION));
+    }
+
+    @Override
+    protected void apply(Map<ResourceLocation, List<Entry>> prepared, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+        for (Map.Entry<ResourceLocation, List<Entry>> list : prepared.entrySet()) {
+            for (Entry entry : list.getValue()) {
+                ResourceLocation advancement = entry.advancementId();
+                ResourceLocation frame = entry.frameId();
+
+                @Nullable FrameWrapper frameWrapper = FrameWrapper.of(frame);
+                if (frameWrapper == null) {
+                    PaginatedAdvancementsClient.LOGGER.error("Advancement Frame '{}' for advancement  '{}' is unknown.", frame, advancement);
+                } else {
+                    CUSTOM_FRAMES.put(advancement, frameWrapper);
+                }
+            }
+        }
+    }
+
+    public static @Nullable FrameWrapper get(ResourceLocation id) {
+        return CUSTOM_FRAMES.getOrDefault(id, null);
+    }
+}
