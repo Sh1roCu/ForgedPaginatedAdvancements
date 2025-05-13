@@ -142,12 +142,12 @@ publisher {
     setModrinthID("${project.modrinth_id}")
     setVersionType("release")
     setVersion("${project.version}")
-    setDisplayName("${project.version}")
+    setDisplayName("${project.mod_name} ${project.version}")
     setGameVersions("1.16.4", "1.16.5")
     setLoaders(ModLoader.FORGE)
     setCurseEnvironment(CurseEnvironment.CLIENT)
     setArtifact(jar)
-    curseDepends { required("348521") }
+    curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
     setChangelog("")
 }
