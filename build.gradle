@@ -115,8 +115,7 @@ publishing {
     }
 }
 
-//why cant be used for 1.20.6
-/*publisher {
+publisher {
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN")
         curseforge System.getenv("CURSEFORGE_TOKEN")
@@ -133,8 +132,8 @@ publishing {
     setArtifact(jar)
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
-    setChangelog("")
-}*/
+    setChangelog("support neoforge-mc1.20.(5/6)")
+}
 
 idea {
     module {
