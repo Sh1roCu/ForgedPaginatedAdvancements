@@ -132,7 +132,7 @@ publisher {
     setArtifact(jar)
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
-    setChangelog("support neoforge-mc1.20.(5/6)")
+    setChangelog("")
 }
 
 idea {
