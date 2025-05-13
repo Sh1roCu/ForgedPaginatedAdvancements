@@ -18,7 +18,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = mod_name
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -117,7 +117,7 @@ publishing {
     }
 }
 
-/*publisher {
+publisher {
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN")
         curseforge System.getenv("CURSEFORGE_TOKEN")
@@ -132,10 +132,10 @@ publishing {
     setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.CLIENT)
     setArtifact(jar)
-    curseDepends { required("cloth_config") }
-    modrinthDepends { required("cloth_config") }
+    curseDepends { required("348521") }
+    modrinthDepends { required("cloth-config") }
     setChangelog("")
-}*/
+}
 
 idea {
     module {
