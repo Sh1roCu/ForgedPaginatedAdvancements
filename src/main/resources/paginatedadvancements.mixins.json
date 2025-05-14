@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "de.dafuqs.paginatedadvancements.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "paginatedadvancements.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "AdvancementMixin",
+    "AdvancementWidgetAccessor",
+    "MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
