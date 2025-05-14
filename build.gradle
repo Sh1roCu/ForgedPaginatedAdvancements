@@ -119,7 +119,7 @@ publisher {
     setArtifact(remapJar)
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
-    setChangelog("support neoforge-mc1.20.2")
+    setChangelog("")
 }
 
 build.dependsOn remapJar
