@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientAdvancements;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +107,11 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
     // instead of drawing the full texture here, we cut it into pieces and draw
     // the top, sides and more piece by piece, making the size variable with the mc window size
     public void drawWindow(GuiGraphics context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
+
         drawFrame(context, minWidth, minHeight, maxWidth, maxHeight);
         context.drawString(this.getMinecraft().font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
     }
