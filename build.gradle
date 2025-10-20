@@ -24,7 +24,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
     version = project.neo_version
-
     parchment {
         mappingsVersion = project.parchment_mappings_version
         minecraftVersion = project.parchment_minecraft_version
@@ -129,7 +128,8 @@ publisher {
     setGameVersions("1.20.5", "1.20.6")
     setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.CLIENT)
-    setArtifact(jar)
+    String artifact = "build/libs/${project.mod_name}-${project.mod_version}.jar"
+    setArtifact(file(artifact))
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
     setChangelog("")
