@@ -131,7 +131,8 @@ publisher {
     setGameVersions("1.21.4")
     setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.CLIENT)
-    setArtifact(jar)
+    String artifact = "build/libs/${project.mod_name}-${project.mod_version}.jar"
+    setArtifact(file(artifact))
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
     setChangelog("")
