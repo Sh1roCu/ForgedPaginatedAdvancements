@@ -17,7 +17,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 
 @Mod(PaginatedAdvancementsClient.MOD_ID)
 public class PaginatedAdvancements {
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("removal")
     public PaginatedAdvancements() {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

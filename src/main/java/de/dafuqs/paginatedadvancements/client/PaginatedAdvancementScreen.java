@@ -5,12 +5,16 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientAdvancements;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundSeenAdvancementsPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,11 +104,21 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
     @Override
     public void removed() {
         super.removed();
+        this.advancementHandler.setListener(null);
+        ClientPacketListener clientPlayNetworkHandler = this.getMinecraft().getConnection();
+        if (clientPlayNetworkHandler != null) {
+            clientPlayNetworkHandler.send(ServerboundSeenAdvancementsPacket.closedScreen());
+        }
     }
 
     // instead of drawing the full texture here, we cut it into pieces and draw
     // the top, sides and more piece by piece, making the size variable with the mc window size
     public void drawWindow(GuiGraphics context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
+
         drawFrame(context, minWidth, minHeight, maxWidth, maxHeight);
         context.drawString(this.getMinecraft().font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
     }
@@ -113,21 +127,21 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
         if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
             if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
                 if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getId())) {
-                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
                 } else {
-                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
                 }
             } else {
                 if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getId())) {
-                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
                 } else {
-                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+                    context.blit(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
                 }
             }
 
             if (hasPins) {
                 // draw pinned tab header
-                context.blit(PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15, 256, 256);
+                context.blit(PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15);
             }
         }
     }
@@ -556,4 +570,11 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
         return advancementTab == null ? null : advancementTab.getWidget(advancement);
     }
 
+    @Override
+    public void onUpdateAdvancementProgress(@NotNull Advancement advancement, @NotNull AdvancementProgress progress) {
+        AdvancementWidget advancementWidget = this.getAdvancementWidget(advancement);
+        if (advancementWidget != null) {
+            advancementWidget.setProgress(progress);
+        }
+    }
 }
