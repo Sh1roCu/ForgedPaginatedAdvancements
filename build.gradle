@@ -146,7 +146,8 @@ publisher {
     setGameVersions("1.16.4", "1.16.5")
     setLoaders(ModLoader.FORGE)
     setCurseEnvironment(CurseEnvironment.CLIENT)
-    setArtifact(jar)
+    String artifact = "build/libs/${project.mod_name}-${project.mod_version}.jar"
+    setArtifact(file(artifact))
     curseDepends { required("cloth-config") }
     modrinthDepends { required("cloth-config") }
     setChangelog("")

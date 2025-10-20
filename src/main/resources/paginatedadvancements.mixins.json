@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "paginatedadvancements.refmap.json",
   "mixins": [
+    "AdvancementMixin"
   ],
   "client": [
     "AdvancementProgressAccessor",
